@@ -1,6 +1,5 @@
 {
-	"description": "A simple but powerfull database, based on flat file storage.
-",
+	"description": "A simple but powerfull database, based on flat file storage.",
 	"keywords": ["storage", "database",  "key", "value", "key-value","flat", "file", "flat-file", "file-files", "flat file", "filebase", "database", "document", "record", "serverless" ,"collection", "fast" ],
 	"name": "paragi/rocket-store",
 	"homepage": "https://github.com/paragi/rocket-store",
