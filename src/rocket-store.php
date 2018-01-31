@@ -14,6 +14,7 @@ namespace Paragi;
 define('RS_ORDER'         ,0x01);    
 define('RS_ORDER_DESC'    ,0x02);
 define('RS_ORDERBY_TIME'  ,0x04);
+define('RS_LOCK'          ,0x08);
 define('RS_DELETE'        ,0x10);
 
 // Post options
@@ -117,6 +118,7 @@ class RocketStore {
             // Read record
             }else{
                 $i = @substr($full_path,strrpos($full_path,DIRECTORY_SEPARATOR) + 1);
+                if($flags & RS_LOCK) flock($full_path);
                 if($this->data_format & RS_FORMAT_JSON)
                     $result[$i] = @json_encode(@file_get_contents($full_path));
                 else

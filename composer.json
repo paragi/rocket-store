@@ -1,7 +1,7 @@
 {
 	"name": "paragi/rocket-store",
 	"version" : "0.3.2",
-	 "authors": [{"name": "Simon Riget","email": "simon@paragi.dk", }],
+  "authors": [{"name": "Simon Riget","email": "simon@paragi.dk"}],
 	"description": "A simple but powerfull database, based on flat file storage.",
 	"keywords": ["storage", "database",  "key", "value", "store", "key-value","flat", "file", "flat-file", "file-files", "flat file", "filebase", "database", "document", "record", "serverless" ,"collection", "fast" ],
 	"homepage": "https://github.com/paragi/rocket-store",
