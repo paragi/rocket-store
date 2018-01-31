@@ -1,10 +1,10 @@
 # Rocket Store
 A simple but powerful database, utilising flat file storage.
 
-Some times you just need to store and retrieve data in in a simple manner, without the need for a separate database process. Its amazing how often a storage tasks can be accomplished, using the filesystem and 3 very simple, but versatile function: POST, GET and DELETE.
+Sometimes you just need to store and retrieve data in a simple and relaiable manner, without the need for a separate database process. Its amazing how often a storage tasks can be accomplished, using the filesystem and 3 very simple, but versatile function: POST, GET and DELETE.
 Its the fastest way to store data outside RAM. Its lightning fast compared to a fullblown database. All packaged in a single file to include, without any dependencies.
 
-However, if you need the superior search and storage power of a real SQL RDBM, this simple tool does not compare.
+However, if you need the superior search and storage power of a real SQL RDBM, this simple tool does not compare in functionallity.
 
 ## Features:
 * Extremely fast
@@ -151,9 +151,9 @@ $dataset = [
 
 foreach($dataset as $key => $record)
     $rs->post("cars", $key, $record);
-```php
----
+```
 
+---
 ## Get
 Search the given collection for one or more records, whos key match the querry. 
 ```php
@@ -188,15 +188,17 @@ print_r(
 );
 ```
 The above example might output this:
-```php
-[error] => 
-[result] => Array (
-    [Lisas-Mercedes-Benz GT R] => Array (
-        [owner] => Lisa Simpson
-    )
-)
-[count] => 1
-```
+
+    [error] => 
+    [result] => Array(
+            [1-BMW-740li] => Array (
+                    [owner] => Greg Onslow
+                )
+            [3-BMW-740li] => Array (
+                    [owner] => Bill Bo
+                )
+        )
+    [count] => 2
 
 ##### Get list ordered by alphabetically decending keys
 ```php
