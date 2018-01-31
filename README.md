@@ -184,7 +184,7 @@ Returns an array containing the result of the operation:
 ##### Get records with matching keys
 ```php
 print_r(
-    $rs->get("cars", "*Mercedes*")
+    $rs->get("cars", "*BMW*")
 );
 ```
 The above example might output this:
@@ -258,6 +258,7 @@ keys, queries and collections is a string of printable characters excluding:
 '|' '<' '>' '~' '&' '..' and the directory separator '/' or '\' and ':' on windows.
 '*' and '?' are allowed in queries.
 All other characters are striped from the string.
+Limitations on other charakters and lenght is imposed by the filesystem
 
 ---
 ## Configuring
