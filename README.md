@@ -62,7 +62,9 @@ $rs = new Paragi\RocketStore();
 $rs->post("cars","Mercedes-Benz GT R",["owner"=>"Lisa Simpson"]);
   
 // GET a record
-print_r($rs->get("cars","Mercedes*"));
+print_r(
+    $rs->get("cars","Mercedes*")
+);
 ```
     
 The above example will output this:
@@ -83,8 +85,9 @@ $rs->post("cars","BMW-740li",["owner"=>"Greg Onslow"],RS_ADD_AUTO_INC);
 $rs->post("cars","BMW-740li",["owner"=>"Sam Wise"],RS_ADD_AUTO_INC);
 $rs->post("cars","BMW-740li",["owner"=>"Bill Bo"],RS_ADD_AUTO_INC);
 
-print_r($rs->get("cars"); 
-print_r($rs->get("cars","*"));
+print_r(
+    $rs->get("cars","*")
+);
 ```
     
 The above example will output this:
@@ -103,7 +106,7 @@ The above example will output this:
         )
     [count] => 3
 
-    
+---    
 ## Post
 The post operation inserts or if it already exists, updates a record.
 ```php
@@ -148,8 +151,9 @@ $dataset = [
 foreach($dataset as $key => $record)
     $rs->post("cars", $key, $record);
 ```php
+---
 
-##Get
+## Get
 Search the given collection for one or more records, whos key match the querry. 
 ```php
 array get( [string $collection [, string $querry [, int $flags = 0 [, int t_min [, int t_max ]]]]]] )
@@ -202,7 +206,7 @@ $rs->get("cars","*BMW*",RS_ORDER_DESC);
 ```php
 $rs->get();
 ```
-
+---
 ## Delete
 Search for one or more records, whos key match the querry. and delete them.
 Can also be used to delete a whole collection with its sequences and the entire database.
@@ -245,13 +249,13 @@ $rs->delete("cars");
 ```php
 $rs->delete();
 ```
-
+---
 ## Legal characters
 keys, queries and collections is a string of printable characters excluding: 
 '|' '<' '>' '~' '&' '..' and the directory separator '/' or '\' and ':' on windows.
 '*' and '?' are allowed in queries.
 All other characters are striped from the string.
-
+---
 ## Configuring
 Configuration options are set with an array passed to the constructor.
 The array can have these options:
@@ -272,7 +276,7 @@ $options = [
 
 $rs = new paragi/rocket-store($options);
 ```
-
+---
 ## Installation
 All you need to do is to download the file 'rocket-store.php' and include it to your script.
 
@@ -282,7 +286,7 @@ Install the package. [Composer](http://getcomposer.org/)
 Execute the command: `composer require paragi/rocket-store`
 
 To modify the `composer.json` manually, add `"paragi/rocket-store" : "^0.5"` to your `required`
-
+---
 ## Benchmarks
 
 The test is performed with 1 million records in in a single collection. 
@@ -290,15 +294,13 @@ The test is performed with 1 million records in in a single collection.
 |System | Mass insert | exact key search | wildcard search | no hit | delete |
 |---|---|---|---|---|---|
 |System: i7 3rd gen on SSD |35000/sec.|25000/sec.|2.2/sec.|200000/sec.|25000/sec.|
-
-
+---
 ## Remarks
 This class was made to optimize resources in an embedded project, with limited resources. But it quickly became apparent, that a generalized interface to the file systems awesome cashing capabilities was very useful in other areas as well. 
 It's all to easy to stick with your stack. Even when you don't need its complexity. That approach can be taxing on both the global environment and very local economy, as bloated software use much more power.
 
 The goal of this project is to make it very simple to use the file system for storage purposes, with a few very versatile methods.
-
-     
+---   
 ## Contributions
 contributions of all kind are highly appreciated. 
 Don't hesitate to submit an issue on github. But please provide a reproducible example.
