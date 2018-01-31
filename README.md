@@ -163,10 +163,10 @@ array get( [string $collection [, string $querry [, int $flags = 0 [, int t_min 
 Name of collection, that is searched. If null, the get method return a list of collections and sequences matching the querry.
     
 #### Querry
-Is the full key to a record, or mixed in with wildcards '*' and '?'. If the querry in null, it's the equvivalent of '*'
+Is the full key to a record, or mixed in with wildcards '\*' and '?'. If the querry in null, it's the equvivalent of '*'
     
 NB: wildcards are very expensive on large datasets, with most filesystems. 
-(on a regular PC with +10 mill records in the collection, it might take up to a second to retreive one record, where as one might retreive 20.000 with an exact key match, in the same time)
+(on a regular PC with +10 mill records in the collection, it might take up to a second to retreive one record, where as one might retreive 20.000 records with an exact key match, in the same time)
     
 #### Flags
     Valid flags: 
