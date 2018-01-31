@@ -51,6 +51,7 @@ A storage area is the directory where data are stored.
 Technically records are compacted data, stored in files, who's name is the key, and placed in a collection, which is a subdirectory, of a data storage area, which is the data storage root directory. 
 Modern file system are optimised and cashed in clever ways, thus eliminating the need to invent cashing and other optimization.
 
+---
 ## Usage
 A simple case of storing records:
 ```php
@@ -59,11 +60,11 @@ require "../src/rocket-store.php";
 $rs = new Paragi\RocketStore();
 
 // POST a record
-$rs->post("cars","Mercedes-Benz GT R",["owner"=>"Lisa Simpson"]);
+$rs->post("cars", "Mercedes-Benz GT R", ["owner" => "Lisa Simpson"]);
   
 // GET a record
 print_r(
-    $rs->get("cars","Mercedes*")
+    $rs->get("cars", "Mercedes*")
 );
 ```
     
@@ -81,12 +82,12 @@ The above example will output this:
 Keys must always be unique. If you have more than one instance of a key, you can add an auto incremented sequence to the key:
 
 ```php
-$rs->post("cars","BMW-740li",["owner"=>"Greg Onslow"],RS_ADD_AUTO_INC);
-$rs->post("cars","BMW-740li",["owner"=>"Sam Wise"],RS_ADD_AUTO_INC);
-$rs->post("cars","BMW-740li",["owner"=>"Bill Bo"],RS_ADD_AUTO_INC);
+$rs->post("cars", "BMW-740li",[ "owner" => "Greg Onslow"], RS_ADD_AUTO_INC);
+$rs->post("cars", "BMW-740li", ["owner" => "Sam Wise"], RS_ADD_AUTO_INC);
+$rs->post("cars", "BMW-740li", ["owner" => Bill Bo"], RS_ADD_AUTO_INC);
 
 print_r(
-    $rs->get("cars","*")
+    $rs->get("cars", "*")
 );
 ```
     
@@ -128,7 +129,7 @@ If a null key is given, an auto incremented sequence is used (or created) as key
         * RS_ADD_AUTO_INC - Add an auto incremented sequence to the beginning of the key
                   
 #### Return
-    Returns an array containing the result of the operation:
+Returns an array containing the result of the operation:
     
     * error: string Empty or containing an error message i the operation failed.
     * key:   string containing the actual key used
@@ -137,15 +138,15 @@ If a null key is given, an auto incremented sequence is used (or created) as key
 #### Example
 ##### Create or updates a record with the given key, appended with an auto incremented sequence
 ```php
-$rs->post("cars","BMW-740li",["owner"=>"Greg Onslow"],RS_ADD_AUTO_INC);
+$rs->post("cars", "BMW-740li", ["owner" => "Greg Onslow"], RS_ADD_AUTO_INC);
 ```
 
 ##### Mass insert 
 ```php
 $dataset = [
-     "Gregs-BMW-740li" => ["owner"=>"Greg Onslow"]
+     "Gregs-BMW-740li" => ["owner" => "Greg Onslow"]
     ,"Lisas-Mercedes-Benz GT R" => ["owner" => "Lisa Simpson"]
-    ,"Bills-BMW-740li" => ["owner"=>"Bill Bo"]
+    ,"Bills-BMW-740li" => ["owner" => "Bill Bo"]
 ];
 
 foreach($dataset as $key => $record)
@@ -173,7 +174,7 @@ NB: wildcards are very expensive on large datasets, with most filesystems.
         * RS_ORDER_DESC - Results returned are ordered alphabetically decending.
                   
 #### Return
-    Returns an array containing the result of the operation:
+Returns an array containing the result of the operation:
     
 * error: string Empty or containing an error message i the operation failed.
 * count: number of affected records
@@ -183,7 +184,7 @@ NB: wildcards are very expensive on large datasets, with most filesystems.
 ##### Get records with matching keys
 ```php
 print_r(
-    $rs->get("cars","*Mercedes*")
+    $rs->get("cars", "*Mercedes*")
 );
 ```
 The above example might output this:
@@ -199,7 +200,7 @@ The above example might output this:
 
 ##### Get list ordered by alphabetically decending keys
 ```php
-$rs->get("cars","*BMW*",RS_ORDER_DESC);
+$rs->get("cars", "*BMW*", RS_ORDER_DESC);
 ```
 
 ##### Get list of collections and sequences
@@ -232,7 +233,7 @@ Returns an array containing the result of the operation:
 #### Example
 ##### Delete matching records from a collection
 ```php
-$rs->delete("cars","*BMW*");
+$rs->delete("cars", "*BMW*");
 ```
 The above example might output this:
 ```php
@@ -255,6 +256,7 @@ keys, queries and collections is a string of printable characters excluding:
 '|' '<' '>' '~' '&' '..' and the directory separator '/' or '\' and ':' on windows.
 '*' and '?' are allowed in queries.
 All other characters are striped from the string.
+
 ---
 ## Configuring
 Configuration options are set with an array passed to the constructor.
@@ -286,6 +288,7 @@ Install the package. [Composer](http://getcomposer.org/)
 Execute the command: `composer require paragi/rocket-store`
 
 To modify the `composer.json` manually, add `"paragi/rocket-store" : "^0.5"` to your `required`
+
 ---
 ## Benchmarks
 
@@ -294,12 +297,13 @@ The test is performed with 1 million records in in a single collection.
 |System | Mass insert | exact key search | wildcard search | no hit | delete |
 |---|---|---|---|---|---|
 |System: i7 3rd gen on SSD |35000/sec.|25000/sec.|2.2/sec.|200000/sec.|25000/sec.|
+
 ---
 ## Remarks
 This class was made to optimize resources in an embedded project, with limited resources. But it quickly became apparent, that a generalized interface to the file systems awesome cashing capabilities was very useful in other areas as well. 
-It's all to easy to stick with your stack. Even when you don't need its complexity. That approach can be taxing on both the global environment and very local economy, as bloated software use much more power.
-
+It's all to easy to stick with your stack. Even when you don't need its complexity. That approach can be taxing on both the global environment and very local economy, as bloated software use much more power. 
 The goal of this project is to make it very simple to use the file system for storage purposes, with a few very versatile methods.
+
 ---   
 ## Contributions
 contributions of all kind are highly appreciated. 
