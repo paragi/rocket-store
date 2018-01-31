@@ -1,8 +1,8 @@
 # Rocket Store
-A simple but powerful database, utilising on flat file storage.
+A simple but powerful database, utilising flat file storage.
 
-Some times you just need to store and retrieve in your app. Its amazing how often a storage tasks can be accomplished, using the filesystem and 3 very simple, but versatile function: POST, GET and DELETE.
-Its the fastest way to store data outside RAM. But combined with a RAM disk, its lightning fast. All packaged in a single file to include, without any dependencies.
+Some times you just need to store and retrieve data in in a simple manner, without the need for a separate database process. Its amazing how often a storage tasks can be accomplished, using the filesystem and 3 very simple, but versatile function: POST, GET and DELETE.
+Its the fastest way to store data outside RAM. Its lightning fast compared to a fullblown database. All packaged in a single file to include, without any dependencies.
 
 However, if you need the superior search and storage power of a real SQL RDBM, this simple tool does not compare.
 
@@ -37,34 +37,32 @@ A record is an arbitrary chunk of data in the form of a PHP array or a scalar va
 (It is a loose equivalent of a SQL row)
 
 ### Collection  
-Records are grouped into named collections. There can be as many collections as you need.
+Records are grouped into named collections. There can be as many records in a collection and collections in your data storage area as your filesystem can handle. >1.000.000
 (It's like a SQL table)
 
 ### Keys
-All records must have a unique key. A Key is a string of “legal characters” It is often a combination of values from the record, or as auto incremented sequence, or both.
+All records must have a unique key. A Key is a string of “legal characters” It is often a combination of values from the record, or an auto incremented sequence, or both.
 Wildcards can be used in GET and DELETE operations.
 
 ### Storage area
 A storage area is the directory where data are stored.
 (It's almost the same as a SQL database name)
-  
     
 Technically records are compacted data, stored in files, who's name is the key, and placed in a collection, which is a subdirectory, of a data storage area, which is the data storage root directory. 
 Modern file system are optimised and cashed in clever ways, thus eliminating the need to invent cashing and other optimization.
 
-
 ## Usage
 A simple case of storing records:
 ```php
-    // Initialize    
-    require "../src/rocket-store.php";
-    $rs = new Paragi\RocketStore();
+// Initialize    
+require "../src/rocket-store.php";
+$rs = new Paragi\RocketStore();
 
-    // POST a record
-    $rs->post("cars","Mercedes-Benz GT R",["owner"=>"Lisa Simpson"]);
-    
-    // GET a record
-    print_r($rs->get("cars","Mercedes*"));
+// POST a record
+$rs->post("cars","Mercedes-Benz GT R",["owner"=>"Lisa Simpson"]);
+  
+// GET a record
+print_r($rs->get("cars","Mercedes*"));
 ```
     
 The above example will output this:
@@ -81,12 +79,12 @@ The above example will output this:
 Keys must always be unique. If you have more than one instance of a key, you can add an auto incremented sequence to the key:
 
 ```php
-    $rs->post("cars","BMW-740li",["owner"=>"Greg Onslow"],RS_ADD_AUTO_INC);
-    $rs->post("cars","BMW-740li",["owner"=>"Sam Wise"],RS_ADD_AUTO_INC);
-    $rs->post("cars","BMW-740li",["owner"=>"Bill Bo"],RS_ADD_AUTO_INC);
-    
-    print_r($rs->get("cars"); 
-    print_r($rs->get("cars","*"));
+$rs->post("cars","BMW-740li",["owner"=>"Greg Onslow"],RS_ADD_AUTO_INC);
+$rs->post("cars","BMW-740li",["owner"=>"Sam Wise"],RS_ADD_AUTO_INC);
+$rs->post("cars","BMW-740li",["owner"=>"Bill Bo"],RS_ADD_AUTO_INC);
+
+print_r($rs->get("cars"); 
+print_r($rs->get("cars","*"));
 ```
     
 The above example will output this:
