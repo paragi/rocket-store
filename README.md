@@ -314,4 +314,7 @@ Don't hesitate to submit an issue on github. But please provide a reproducible e
 
 Code should look good and compact, and be covered by a test case or example.
 Please don't change the formatting style laid out, without a good reason. I know its not the most common standard, but its rather efficient one.
+<<<<<<< HEAD
 
+=======
+>>>>>>> bfc18d9b48887b07b1486c5d3a976b85f3047a31
