@@ -281,6 +281,7 @@ $options = [
 
 $rs = new paragi/rocket-store($options);
 ```
+
 ---
 ## Installation
 All you need to do is to download the file 'rocket-store.php' and include it to your script.
@@ -309,12 +310,8 @@ The goal of this project is to make it very simple to use the file system for st
 
 ---   
 ## Contributions
-contributions of all kind are highly appreciated. 
+contributions of any kind are highly appreciated. 
 Don't hesitate to submit an issue on github. But please provide a reproducible example.
-
 Code should look good and compact, and be covered by a test case or example.
 Please don't change the formatting style laid out, without a good reason. I know its not the most common standard, but its rather efficient one.
-<<<<<<< HEAD
 
-=======
->>>>>>> bfc18d9b48887b07b1486c5d3a976b85f3047a31
