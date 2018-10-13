@@ -3,15 +3,27 @@
   Rocket Store (Rocket store)
 
   A very simple and yes powerfull flat file storage.
-  
-  (c) Paragi 2017, Simon Riget. 
 
-  License MIT  
+  (c) Paragi 2017, Simon Riget.
+
+  News since last release
+  - fixed use of JSON format
+  2018-03-22
+  data_storage_area path ending without a separator is taken as the final directory to store data files, whereas a path ending sith a separator, will have a direcory added to it.
+
+  JSON format fix construct, post and get
+
+  2018-03-25
+  post JSON added JSON_NUMERIC_CHECK option
+  using \Exception
+  realpath() removed as it require exe access.
+
+  License MIT
 \*============================================================================*/
 namespace Paragi;
 
 // Get options
-define('RS_ORDER'         ,0x01);    
+define('RS_ORDER'         ,0x01);
 define('RS_ORDER_DESC'    ,0x02);
 define('RS_ORDERBY_TIME'  ,0x04);
 define('RS_LOCK'          ,0x08);
@@ -23,44 +35,51 @@ define('RS_ADD_AUTO_INC'  ,0x40);
 // Data storage format options
 define('RS_FORMAT_PHP'    ,0x01);
 define('RS_FORMAT_JSON'   ,0x02);
-define('RS_FORMAT_XML'    ,0x04); // Not implemened 
+define('RS_FORMAT_XML'    ,0x04); // Not implemened
 
 class RocketStore {
     public $data_storage_area = null;
     public $data_format = RS_FORMAT_PHP;
-    
-    /*============================================================================*\
-      Configure
-    \*============================================================================*/      
-    public function __construct($option = []) {
-        if(!empty($option['data_storage_area']))
-           $dir = realpath($option['data_storage_area']);
-        elseif(is_dir(sys_get_temp_dir()))
-           $dir = sys_get_temp_dir();
-        elseif(is_dir($_SERVER['DOCUMENT_ROOT']))
-            $dir = $_SERVER['DOCUMENT_ROOT'];
-        else
-           $dir = "." . DIRECTORY_SEPARATOR;
-        if(!is_dir($dir) || !is_writable($dir)) 
-           throw new Error("RocketStore data storage area '$dir' is not at writable directory");
-        $this->data_storage_area = 
-           $dir . DIRECTORY_SEPARATOR . "rocket_store" . DIRECTORY_SEPARATOR;  
 
-        $this_data_format = 
-              intval(@$option['data_format'])
-              & ( RS_FORMAT_PHP | RS_FORMAT_JSON | RS_FORMAT_XML )
+    /*========================================================================*\
+      Configure
+    \*========================================================================*/
+    public function __construct($option = []) {
+        if(!empty($option['data_storage_area'])){
+            $dir = dirname($option['data_storage_area']);
+            $this->data_storage_area =
+                $option['data_storage_area'] . DIRECTORY_SEPARATOR;
+
+        }else{
+            if(is_dir(sys_get_temp_dir()))
+                $dir = sys_get_temp_dir();
+            elseif(is_dir($_SERVER['DOCUMENT_ROOT']))
+                $dir = $_SERVER['DOCUMENT_ROOT'];
+            else
+                $dir = "." . DIRECTORY_SEPARATOR;
+
+            $this->data_storage_area =
+                $dir . DIRECTORY_SEPARATOR . "rocket_store" . DIRECTORY_SEPARATOR;
+        }
+        if(!is_dir($dir) || !is_writable($dir))
+           throw new \Exception("RocketStore data storage area '$dir' is not at writable directory");
+
+        $this->data_format =
+              (intval(@$option['data_format'])
+              & ( RS_FORMAT_PHP | RS_FORMAT_JSON | RS_FORMAT_XML ))
             ? : RS_FORMAT_PHP;
+
     }
-        
-    /*============================================================================*\
-      Post a data record (Insert or overwrite)  
-    \*============================================================================*/      
+
+    /*========================================================================*\
+      Post a data record (Insert or overwrite)
+    \*========================================================================*/
     public function post($collection, $key, $record ,$flags = 0){
 
         $collection = $this->path_safe($collection);
         if(empty($collection))
             return ["error" => "No valid collection name given", "count" => 0];
-        
+
         $dir = $this->data_storage_area . $collection;
         if(!is_writable($dir))
             if(!mkdir($dir, 0777, true))
@@ -70,8 +89,8 @@ class RocketStore {
 
         // Insert a sequence
         if(empty($key) || ($flags & RS_ADD_AUTO_INC)) {
-            $seq = $this->sequence($collection . '_seq');
-            if($seq < 0) 
+            $seq = $this->sequence($collection);
+            if($seq < 0)
                return ["error" => "Unable to access sequence '{$colleciton}_seq'", "count" => 0];
             $key = empty($key) ? "$seq" : "{$seq}-" . $key;
         }
@@ -79,27 +98,26 @@ class RocketStore {
         // Write to file
         if($this->data_format & RS_FORMAT_JSON)
             $chars_written = @file_put_contents(
-                 $dir . DIRECTORY_SEPARATOR . $key
-                ,json_encode($record, JSON_HEX_QUOT | JSON_PRETTY_PRINT)
+                 $dir . DIRECTORY_SEPARATOR . $key, json_encode($record, JSON_HEX_QUOT | JSON_PRETTY_PRINT | JSON_NUMERIC_CHECK)
            );
         else
             $chars_written = @file_put_contents(
                  $dir . DIRECTORY_SEPARATOR . $key
                 ,serialize($record)
             );
-            
-        if($chars_written === false) 
+
+        if($chars_written === false)
             return ["error" => "Unable to write to filesystem: "
                 . "{$this->data_storage_area}{$collection}" . DIRECTORY_SEPARATOR . $key
                 , "count" => 0
-            ];  
-        
-        return ["error" => "", "key" => $key, "count" => 1];  
+            ];
+
+        return ["error" => "", "key" => $key, "count" => 1];
     }
 
-    /*============================================================================*\
+    /*========================================================================*\
       Get one or more records or list all collections (or delete it)
-    \*============================================================================*/      
+    \*========================================================================*/
     public function get($collection = '', $key = '', $min_time = null , $max_time = null, $flags = 0){
 
         $collection = $this->path_safe($collection);
@@ -111,7 +129,7 @@ class RocketStore {
         $result = [];
         $hit = glob($path, $flags & (RS_ORDER | RS_ORDER_DESC) ? null : GLOB_NOSORT);
         foreach($hit as $full_path){
-            // delete 
+            // delete
             if($flags & RS_DELETE){
                $count += $this->recursive_file_delete($full_path);
 
@@ -120,10 +138,10 @@ class RocketStore {
                 $i = @substr($full_path,strrpos($full_path,DIRECTORY_SEPARATOR) + 1);
                 if($flags & RS_LOCK) flock($full_path);
                 if($this->data_format & RS_FORMAT_JSON)
-                    $result[$i] = @json_encode(@file_get_contents($full_path));
+                    $result[$i] = @json_decode(@file_get_contents($full_path),true);
                 else
                     $result[$i] = @unserialize(@file_get_contents($full_path));
-                $count++;    
+                $count++;
             }
         }
 
@@ -131,64 +149,64 @@ class RocketStore {
              "error" => ""
             ,"result" => $flags & RS_ORDER_DESC ? array_reverse($result) : $result
             ,"count" => $count
-        ];  
+        ];
     }
 
-    /*============================================================================*\
+    /*========================================================================*\
       Delete one or more records or collections
-    \*============================================================================*/      
+    \*========================================================================*/
     public function delete($collection = null, $key = null){
         return $this->get($collection,$key,null,null,RS_DELETE);
     }
 
-    /*============================================================================*\
+    /*========================================================================*\
       increment (or create) a sequence
-      
+
       Return count or negative value when failing
-    \*============================================================================*/      
+    \*========================================================================*/
     public function sequence($name){
         $name = $this->path_safe($name);
-        if(empty($name)) 
+        if(empty($name))
            return -1;
-        $file_name = $this->data_storage_area . $name;
-        
+        $file_name = $this->data_storage_area . $name  . '_seq';
+
         $file = fopen($file_name, "cb+");
-        if(!$file || !flock($file, LOCK_EX)) 
+        if(!$file || !flock($file, LOCK_EX))
            return -2;
-          
+
         $sequence = intval(fread($file,100)) + 1; // if empty it returns False => 0 + 1
         rewind($file);
         fwrite($file,$sequence);
         flock($file, LOCK_UN);
 
         return $sequence;
-    } 
-    
-    /*============================================================================*\
+    }
+
+    /*========================================================================*\
       Private functions
-    \*============================================================================*/      
+    \*========================================================================*/
     private function recursive_file_delete($path) {
         if(!is_dir($path)) return unlink($path) ? 1 : 0;
-       
+
         @unlink(substr($path,0,-1) . "_seq");
         $count = 0;
         foreach(glob("$path/*", GLOB_NOSORT) as $file) {
-            if(is_dir($file)) 
+            if(is_dir($file))
                $count += $this->recursive_file_delete($file);
-            else  
+            else
                $count += unlink($file) ? 1 : 0;
-            }    
+            }
         rmdir($path);
       return $count;
-    } 
-    
+    }
+
     private function path_safe($name, $allow_wildcards = false){
         // No unnessesary limits
         $regex = '/[\x00-\x1F\|<>\'"\~\&\\' . DIRECTORY_SEPARATOR;
         if(strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') $regex .= '\\\:';
-        if(!$allow_wildcards) $regex .= '\?\*'; 
+        if(!$allow_wildcards) $regex .= '\?\*';
         $regex .= ']|([\.]{2,})/';
-         
+
         return preg_replace($regex, '', $name);
     }
 }

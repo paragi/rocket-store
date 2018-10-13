@@ -15,14 +15,6 @@ However, if you need the superior search and storage power of a real SQL RDBM, t
 * Works without configuration or setup.
 * Records (arrays) are stored in editable text files.
 
-Contra indications
-* No record locking
-* No linked relations
-* No NULL values
-* No duplicate keys
-* No full table scan search
-* No complex search facilities
-
 ## Introduction
 You can POST, GET or DELETE one or more records in a collection.
 
@@ -33,12 +25,12 @@ record = row
 However the terms are very lose and flexible, compared to SQL. 
 
 ### Record
-A record is an arbitrary chunk of data in the form of a PHP array or a scalar variable. There are no fixed structure or definition. They don't have to be alike at all.
-(It is a loose equivalent of a SQL row)
+A record is an arbitrary chunk of data in the form of a PHP array or a scalar variable. (A loose equivalent to a SQL row) There are no fixed structure or definition. They don't have to be alike at all.
+
 
 ### Collection  
-Records are grouped into named collections. There can be as many records in a collection and collections in your data storage area as your filesystem can handle. >1.000.000
-(It's like a SQL table)
+Records are grouped into named collections. (Like a SQL table) There can be as many records in a collection and collections in your data storage area as your filesystem can handle. >1.000.000
+
 
 ### Keys
 All records must have a unique key. A Key is a string of “legal characters” It is often a combination of values from the record, or an auto incremented sequence, or both.
