@@ -59,7 +59,7 @@ class RocketStore {
                 $dir = "." . DIRECTORY_SEPARATOR;
 
             $this->data_storage_area =
-                $dir . DIRECTORY_SEPARATOR . "rocket_store" . DIRECTORY_SEPARATOR;
+                $dir . DIRECTORY_SEPARATOR . "rsdb" . DIRECTORY_SEPARATOR;
         }
         if(!is_dir($dir) || !is_writable($dir))
            throw new \Exception("RocketStore data storage area '$dir' is not at writable directory");
