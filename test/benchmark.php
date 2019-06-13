@@ -1,19 +1,83 @@
 <?php
 /*============================================================================*\
   Rocket store - test suite
-  
+
   (c) Simon Riget 2017
   License MIT
-System: i7 3rd gen on SSD
-Mass insert: 31601.258661459/sec.
-Exact key search 1 hit: 25623.088110658/sec.
-Exact key search not found: 235735.98246265/sec.
-Wildcard key search 2 hits: 2.2448931913187/sec.
-Wildcard key delete 2 hits: 2.2166423209533/sec.
-Excat key delete 1 hits: 29852.697508897/sec.
-Delete collection: 44355.386458937/sec.
 
-\*============================================================================*/      
+
+  Some results:
+
+  PHP on i7 3rd gen on SSD
+  ┌───────────────────────────────────┬─────────────┐
+  │ Mass insert                       │ 31601 /sec  │
+  ├───────────────────────────────────┼─────────────┤
+  │ Exact random key search           │ 25623 /sec  │
+  ├───────────────────────────────────┼─────────────┤
+  │ Exact ramdom key search no hit    │ 235735 /sec │
+  ├───────────────────────────────────┼─────────────┤
+  │ Wildcard ramdom key search 2 hits │ 2.25 /sec   │
+  ├───────────────────────────────────┼─────────────┤
+  │ Wildcard ramdom key search no hit │             │
+  ├───────────────────────────────────┼─────────────┤
+  │ Wildcard ramdom delete 2 hits     │ 2.22 /sec   │
+  ├───────────────────────────────────┼─────────────┤
+  │ Exact random delete               │ 29852 /sec  │
+  └───────────────────────────────────┴─────────────┘
+
+
+  Nodeon i7 3rd gen on SSD
+  ┌───────────────────────────────────┬─────────────┐
+  │ Mass insert                       │ 69434 /sec  │
+  ├───────────────────────────────────┼─────────────┤
+  │ Exact random key search           │ 86775 /sec  │
+  ├───────────────────────────────────┼─────────────┤
+  │ Exact ramdom key search no hit    │ 123304 /sec │
+  ├───────────────────────────────────┼─────────────┤
+  │ Wildcard ramdom key search 2 hits │ 14.6 /sec   │
+  ├───────────────────────────────────┼─────────────┤
+  │ Wildcard ramdom key search no hit │ 15.5 /sec   │
+  ├───────────────────────────────────┼─────────────┤
+  │ Wildcard ramdom delete 2 hits     │ 15.5 /sec   │
+  ├───────────────────────────────────┼─────────────┤
+  │ Exact random delete               │ 325.7 /sec  │
+  └───────────────────────────────────┴─────────────┘
+
+  PHP on Raspbarry PI Zero
+  ┌───────────────────────────────────┬─────────────┐
+  │ Mass insert                       │    532 /sec │
+  ├───────────────────────────────────┼─────────────┤
+  │ Exact random key search           │    197 /sec │
+  ├───────────────────────────────────┼─────────────┤
+  │ Exact ramdom key search no hit    │   1571 /sec │
+  ├───────────────────────────────────┼─────────────┤
+  │ Wildcard ramdom key search 2 hits │   0.11 /sec │
+  ├───────────────────────────────────┼─────────────┤
+  │ Wildcard ramdom key search no hit │             │
+  ├───────────────────────────────────┼─────────────┤
+  │ Wildcard ramdom delete 2 hits     │   0.11 /sec │
+  ├───────────────────────────────────┼─────────────┤
+  │ Exact random delete               │   181 /sec  │
+  └───────────────────────────────────┴─────────────┘
+
+  Node on Raspbarry Pi Zero
+  ┌───────────────────────────────────┬─────────────┐
+  │ Mass insert                       │    561 /sec │
+  ├───────────────────────────────────┼─────────────┤
+  │ Exact random key search           │     96 /sec │
+  ├───────────────────────────────────┼─────────────┤
+  │ Exact ramdom key search no hit    │    147 /sec │
+  ├───────────────────────────────────┼─────────────┤
+  │ Wildcard ramdom key search 2 hits │   0.27 /sec │
+  ├───────────────────────────────────┼─────────────┤
+  │ Wildcard ramdom key search no hit │   0.27 /sec │
+  ├───────────────────────────────────┼─────────────┤
+  │ Wildcard ramdom delete 2 hits     │   0.29 /sec │
+  ├───────────────────────────────────┼─────────────┤
+  │ Exact random delete               │   10.3 /sec │
+  └───────────────────────────────────┴─────────────┘
+
+\*============================================================================*/
 require "../src/rocket-store.php";
 $rs = new Paragi\RocketStore();
 
@@ -67,11 +131,12 @@ $record[] = [
 //print_r($rs->get($collection,substr(rand(),-5) . "6-Adam Smith"));
 
 echo "<pre>Bench mark test\n";
-echo "System: i7 3rd gen on SSD\n";
-$rows = 0;
+echo "┌───────────────────────────────────┬─────────────┐\n";
+
 
 if($create){
-  echo "Mass insert: ";
+$rows = 0;
+  echo "| Mass insert:                      |";
 
   $id = 1;
   $ts = microtime(true);
@@ -88,12 +153,13 @@ if($create){
     }
 
   $rows += --$c;
-  echo 5 * $c / (microtime(true) - $ts) ."/sec.\n";
+  printf(" % 6d /sec. |\n",5 * $c / (microtime(true) - $ts));
+  echo "├───────────────────────────────────┼─────────────┤\n";
 }
 
 
 if(true){
-  echo "Exact key search 1 hit: ";
+  echo "| Exact key search 1 hit:           |";
 
   $id = 1;
   $ts = microtime(true);
@@ -108,12 +174,13 @@ if(true){
   }
 
   $c--;
-  echo $c / (microtime(true) - $ts) ."/sec.\n";
+  printf(" % 6d /sec. |\n",5 * $c / (microtime(true) - $ts));
+  echo "├───────────────────────────────────┼─────────────┤\n";
 }
 
 
 if(true){
-  echo "Exact key search not found: ";
+  echo "| Exact key search not found:       |";
 
   $id = 1;
   $ts = microtime(true);
@@ -129,11 +196,14 @@ if(true){
 
   $c--;
   echo $c / (microtime(true) - $ts) ."/sec.\n";
+  printf(" % 6d /sec. |\n",5 * $c / (microtime(true) - $ts));
+  echo "├───────────────────────────────────┼─────────────┤\n";
+
 }
 
 
 if(true){
-  echo "Wildcard key search 2 hits: ";
+  echo "| Wildcard key search 2 hits:       |";
 
   $id = 1;
   $ts = microtime(true);
@@ -148,11 +218,12 @@ if(true){
   }
 
   $c--;
-  echo $c / (microtime(true) - $ts) ."/sec.\n";
+  printf(" % 6d /sec. |\n",5 * $c / (microtime(true) - $ts));
+  echo "├───────────────────────────────────┼─────────────┤\n";
 }
 
 if($delete){
-  echo "Wildcard key delete 2 hits: ";
+  echo "| Wildcard key delete 2 hits:       |";
 
   $id = 1;
   $ts = microtime(true);
@@ -167,11 +238,12 @@ if($delete){
   }
 
   $c--;
-  echo $c / (microtime(true) - $ts) ."/sec.\n";
+  printf(" % 6d /sec. |\n",5 * $c / (microtime(true) - $ts));
+  echo "├───────────────────────────────────┼─────────────┤\n";
 }
 
 if($delete){
-  echo "Excat key delete 1 hits: ";
+  echo "| Excat key delete 1 hits:          |";
 
   $id = 1;
   $ts = microtime(true);
@@ -185,12 +257,15 @@ if($delete){
     }
   }
 
+  echo "├───────────────────────────────────┼─────────────┤\n";
+
   $c--;
-  echo $c / (microtime(true) - $ts) ."/sec.\n";
+  printf(" % 6d /sec. |\n",5 * $c / (microtime(true) - $ts));
+  echo "├───────────────────────────────────┼─────────────┤\n";
 }
 
 if($delete){
-  echo "Delete collection: ";
+  echo "| Delete collection:                |";
 
   $id = 1;
   $ts = microtime(true);
@@ -201,5 +276,7 @@ if($delete){
     exit;
   }
   echo $result['count'] / (microtime(true) - $ts) ."/sec.\n";
+  printf(" % 6d /sec. |\n",5 * $c / (microtime(true) - $ts));
 }
 
+echo "└───────────────────────────────────┴─────────────┘\n";
